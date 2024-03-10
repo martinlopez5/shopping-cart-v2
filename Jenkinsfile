@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    parameters {
+        booleanParam(name: 'RUN_INTEGRATION_TESTS', defaultValue: true)
+    }
+
     stages {
         stage('Test') {
             parallel {
@@ -14,21 +18,16 @@ pipeline {
                 stage('Integration tests') {
                     when {
                         expression {
-                            // Esta condición verifica el valor de la variable booleana
                             return params.RUN_INTEGRATION_TESTS != 'false'
                         }
                     }
                     steps {
                         script {
-                            sh './mvnw test -DtestGroups=integration'
+                            sh './mvnw test -D testGroups=integration'
                         }
                     }
                 }
             }
         }
-    }
-
-    parameters {
-        booleanParam(name: 'RUN_INTEGRATION_TESTS', defaultValue: true, description: 'Determina si se deben ejecutar las pruebas de integración')
     }
 }
